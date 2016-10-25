@@ -6,11 +6,8 @@ var curidx = 0;
 function new_quote(){
 	if(isFirst){
 		var rand = Math.random();
-		console.log(rand);
 		var len = quotes.length;
-		console.log(len);
 		curidx = Math.floor(rand*len);
-		console.log(curidx);
 		isFirst = false;
 		return quotes[curidx];
 	}
@@ -20,7 +17,6 @@ function new_quote(){
 	else{
 		curidx = 0;
 	}
-	console.log(curidx);
 	return quotes[curidx];
 }
 function change_quote(){
@@ -33,7 +29,23 @@ function change_quote(){
 		next();
 	});
 	g.fadeIn(ANIMATION_DELAY);
-	
+	set_tweet_text(q);
+}
+
+function tweet_text(generated) {
+    var prefix;
+    prefix = "Inspirotron: " + generated;
+    return prefix;
+}
+
+function set_tweet_text(generated) {
+    var text = tweet_text(generated);
+    if (text) { 
+        $('#tweet').attr("href", ("https://twitter.com/share" +
+                "?url=" + window.location.href +
+                "&text=" + encodeURIComponent(text)
+        ));
+    }
 }
 
 $(document).ready(function(e) {
