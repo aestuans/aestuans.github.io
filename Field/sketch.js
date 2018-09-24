@@ -15,6 +15,7 @@ let shootx = 0;
 let shooty = 0;
 let div_height = 0;
 let div_width = 0;
+let level = 0;
 var cnv;
 //
 // document.getElementById("reset").onclick = function() {ready_game()};
@@ -55,8 +56,9 @@ function setup() {
 function new_game() {
     nuclei = [];
     resizeCanvas(div_width, div_height);
+    document.getElementById("level").textContent = "LEVEL " + (level+1).toString();
     // create_field(5, 1, 2, 10);
-    create_field_from_data(levels[0]);
+    create_field_from_data(levels[level]);
     ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
 }
 function ready_game() {
@@ -64,7 +66,10 @@ function ready_game() {
 }
 
 function win() {
-    return;
+    level++;
+    console.log(level);
+    new_game();
+    ball.die = false;
 }
 
 function getRandomInt(min, max) {
@@ -94,7 +99,7 @@ function create_field_from_data(data) {
     target = new particle(x, y);
 }
 
-function create_field(nuclei_num, target_num, min_intensity, max_intensity) {
+function create_random_field(nuclei_num, target_num, min_intensity, max_intensity) {
 
     let this_field = {"nuclei":[], "target":null};
 
@@ -157,7 +162,8 @@ function update_ball() {
         [distsq, [dirx, diry]] = ball.dist_from(target);
         if(sqrt(distsq) < EPSILON) {
             ball.die = true;
-            win();
+            if(ball.die === true)
+                win();
         }
     }
 }
@@ -187,14 +193,15 @@ function draw() {
     fill(255);
     smooth();
 
-    update_ball();
+    if(ball.die === false)
+        update_ball();
     draw_nuclei();
     draw_target();
     draw_ball();
     draw_tails();
 
-    if(ball.die === true)
-        ready_game();
+    // if(ball.die === true)
+    //     ready_game();
     push();
     if(ball.locked === true)
         ready_shoot(ball);
