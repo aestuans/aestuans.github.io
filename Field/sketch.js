@@ -173,6 +173,11 @@ function draw_nuclei() {
     }
 }
 
+function collided_with_wall(x, y, i) {
+    return x > walls[i].x && x < (walls[i].x + walls[i].width) &&
+           y > walls[i].y && y < (walls[i].y + walls[i].height);
+
+}
 function update_ball() {
     if (ball.locked === false) {
         for (let j = 0; j < nuclei.length; j++) {
@@ -180,6 +185,13 @@ function update_ball() {
         }
         ball.update();
 
+        //Hit wall?
+        for(let i = 0; i < walls.length; i++) {
+            if(collided_with_wall(ball.x, ball.y, i))
+                ball.die = true;
+        }
+
+        //Hit target?
         let distsq, dirx, diry;
         [distsq, [dirx, diry]] = ball.dist_from_particle(target);
         if(sqrt(distsq) < EPSILON) {
