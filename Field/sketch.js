@@ -10,6 +10,7 @@ let BACKGROUND = 30;
 
 let ball = null;
 let nuclei = []; //Static particles
+let walls = [];
 let target = null;
 let shootx = 0;
 let shooty = 0;
@@ -55,6 +56,7 @@ function setup() {
 }
 function new_game() {
     nuclei = [];
+    walls = [];
     resizeCanvas(div_width, div_height);
     document.getElementById("level").textContent = "LEVEL " + (level+1).toString();
     // create_field(5, 1, 2, 10);
@@ -76,7 +78,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * Math.floor(max - min)) + min;
 }
 
-function reletive_to_absolute(x, y, intensity=1) {
+function reletive_to_absolute_position(x, y, intensity=1) {
     let left_extreme = div_width * SIDE_MARGIN;
     let right_extreme = div_width * (1 - SIDE_MARGIN);
     let up_extreme = div_height * VERTICAL_MARGIN;
@@ -87,15 +89,35 @@ function reletive_to_absolute(x, y, intensity=1) {
     return [x_abs, y_abs, intensity];
 }
 
+function reletive_to_absolute_size(x, y) {
+    let left_extreme = div_width * SIDE_MARGIN;
+    let right_extreme = div_width * (1 - SIDE_MARGIN);
+    let up_extreme = div_height * VERTICAL_MARGIN;
+    let bottom_extreme = div_height * (1 - VERTICAL_MARGIN);
+
+    let x_abs = x * (right_extreme - left_extreme);
+    let y_abs = y * (bottom_extreme - up_extreme);
+    return [x_abs, y_abs];
+}
+
 function create_field_from_data(data) {
-    let x, y, intensity;
+    let x, y, intensity, width, height;
 
     for(let i = 0; i < data.nuclei.length; i++) {
         let curr = data.nuclei[i];
-        [x, y, intensity] = reletive_to_absolute(curr.x, curr.y, curr.intensity);
+        [x, y, intensity] = reletive_to_absolute_position(curr.x, curr.y, curr.intensity);
         nuclei.push(new particle(x, y, intensity))
     }
-    [x,y] = reletive_to_absolute(data.target.x, data.target.y);
+
+    for(let i = 0; i < data.walls.length; i++) {
+        let curr = data.walls[i];
+        [x, y] = reletive_to_absolute_position(curr.x, curr.y);
+        [width, height] = reletive_to_absolute_size(curr.width, curr.height);
+
+        walls.push(new wall(x, y, width, height));
+    }
+
+    [x,y] = reletive_to_absolute_position(data.target.x, data.target.y);
     target = new particle(x, y);
 }
 
@@ -159,7 +181,7 @@ function update_ball() {
         ball.update();
 
         let distsq, dirx, diry;
-        [distsq, [dirx, diry]] = ball.dist_from(target);
+        [distsq, [dirx, diry]] = ball.dist_from_particle(target);
         if(sqrt(distsq) < EPSILON) {
             ball.die = true;
             if(ball.die === true)
@@ -183,6 +205,16 @@ function draw_tails() {
     }
 }
 
+function draw_walls() {
+    fill(193, 255, 193);
+    stroke(200);
+    rectMode(CORNER);
+    for(let i = 0; i < walls.length; i++) {
+        console.log(walls[i].x, walls[i].y, walls[i].width, walls[i].height);
+        rect(walls[i].x, walls[i].y, walls[i].width, walls[i].height);
+    }
+}
+
 function draw() {
     if(ball === null)
         return;
@@ -199,9 +231,12 @@ function draw() {
     draw_target();
     draw_ball();
     draw_tails();
+    push();
+    draw_walls();
+    pop();
 
-    // if(ball.die === true)
-    //     ready_game();
+    if(ball.die === true)
+        ready_game();
     push();
     if(ball.locked === true)
         ready_shoot(ball);
@@ -254,7 +289,7 @@ let particle = function (x, y, intensity = 1, vx = 0, vy = 0, ax = 0, ay = 0, lo
     this.history = [];
     this.tick = 0;
 
-    this.dist_from = function(other) {
+    this.dist_from_particle = function(other) {
         // returns square of distance aith normalized direction
         let dx = other.x - this.x;
         let dy = other.y - this.y;
@@ -267,7 +302,7 @@ let particle = function (x, y, intensity = 1, vx = 0, vy = 0, ax = 0, ay = 0, lo
 
     this.influenced_by = function(other) {
         let distsq, dirx, diry;
-        [distsq, [dirx, diry]] = this.dist_from(other);
+        [distsq, [dirx, diry]] = this.dist_from_particle(other);
 
         this.ax += dirx * G * this.intensity * other.intensity / distsq;
         this.ay += diry * G * this.intensity * other.intensity / distsq;
@@ -293,3 +328,9 @@ let particle = function (x, y, intensity = 1, vx = 0, vy = 0, ax = 0, ay = 0, lo
     };
 };
 
+let wall = function (x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+};
