@@ -64,7 +64,10 @@ function new_game() {
         end_game()
     }
     else {
-        document.getElementById("level").textContent = "LEVEL " + (level+1).toString();
+        let level_indicator = document.getElementById("level");
+        level_indicator.style.color = "#656565";
+        level_indicator.style.fontSize = "40px";
+        level_indicator.textContent = "LEVEL " + (level+1).toString();
 
         create_field_from_data(levels[level]);
         ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
@@ -79,14 +82,12 @@ function ready_game() {
         ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
 }
 
-function win() {
-    level++;
-    console.log(level);
-    new_game();
-}
-
 function end_game() {
-    document.getElementById("level").textContent = "YOU WIN!";
+    level++;
+    let level_indicator = document.getElementById("level");
+    level_indicator.textContent = "YOU WIN!";
+    level_indicator.style.color = "red";
+    level_indicator.style.fontSize = "60px";
 }
 
 function getRandomInt(min, max) {
@@ -212,7 +213,7 @@ function update_ball() {
         if(sqrt(distsq) < EPSILON) {
             ball.die = true;
             if(ball.die === true)
-                win();
+                end_game();
         }
     }
 }
