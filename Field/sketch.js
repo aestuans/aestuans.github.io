@@ -1,12 +1,12 @@
 let G = 500; //Gravitational constant
-let EPSILON = 15;
+let EPSILON = 20;
 let TAIL_LENGTH = 64;
 let TAIL_VISIBILITY = 180;
-let SIDE_MARGIN = 0.2; // For particles, as fraction of div width/height
-let VERTICAL_MARGIN = 0.2;
+let SIDE_MARGIN = 0.1; // For particles, as fraction of div width/height
+let VERTICAL_MARGIN = 0.1;
 let SHOT_RAD = 400;
 let BACKGROUND = 30;
-let PARTICLE_DRAW_SCALE = 6;
+let PARTICLE_DRAW_SCALE = 8;
 
 
 let ball = null;
@@ -17,7 +17,7 @@ let shootx = 0;
 let shooty = 0;
 let div_height = 0;
 let div_width = 0;
-let level = 0;
+let level = 1;
 var cnv;
 //
 // document.getElementById("reset").onclick = function() {ready_game()};
