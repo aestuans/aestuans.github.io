@@ -17,7 +17,7 @@ let shootx = 0;
 let shooty = 0;
 let div_height = 0;
 let div_width = 0;
-let level = 1;
+let level = 0;
 var cnv;
 //
 // document.getElementById("reset").onclick = function() {ready_game()};
