@@ -16,7 +16,7 @@ let shootx = 0;
 let shooty = 0;
 let div_height = 0;
 let div_width = 0;
-let level = 0;
+let level = 1;
 var cnv;
 //
 // document.getElementById("reset").onclick = function() {ready_game()};
@@ -58,20 +58,34 @@ function new_game() {
     nuclei = [];
     walls = [];
     resizeCanvas(div_width, div_height);
-    document.getElementById("level").textContent = "LEVEL " + (level+1).toString();
-    // create_field(5, 1, 2, 10);
-    create_field_from_data(levels[level]);
-    ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
+
+    if(level >= levels.length) {
+        end_game()
+    }
+    else {
+        document.getElementById("level").textContent = "LEVEL " + (level+1).toString();
+
+        create_field_from_data(levels[level]);
+        ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
+    }
 }
 function ready_game() {
-    ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
+    if (level >= levels.length) {
+        level = 0;
+        new_game();
+    }
+    else
+        ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
 }
 
 function win() {
     level++;
     console.log(level);
     new_game();
-    ball.die = false;
+}
+
+function end_game() {
+    document.getElementById("level").textContent = "YOU WIN!";
 }
 
 function getRandomInt(min, max) {
@@ -222,7 +236,6 @@ function draw_walls() {
     stroke(200);
     rectMode(CORNER);
     for(let i = 0; i < walls.length; i++) {
-        console.log(walls[i].x, walls[i].y, walls[i].width, walls[i].height);
         rect(walls[i].x, walls[i].y, walls[i].width, walls[i].height);
     }
 }
@@ -230,6 +243,8 @@ function draw_walls() {
 function draw() {
     if(ball === null)
         return;
+    console.log(ball.die);
+
     imageMode(CENTER);
     rectMode(CENTER);
     background(BACKGROUND);
@@ -247,7 +262,7 @@ function draw() {
     draw_walls();
     pop();
 
-    if(ball.die === true)
+    if(ball.die === true && level < levels.length)
         ready_game();
     push();
     if(ball.locked === true)
