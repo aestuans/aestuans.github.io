@@ -1,11 +1,12 @@
 let G = 500; //Gravitational constant
-let EPSILON = 10;
+let EPSILON = 15;
 let TAIL_LENGTH = 64;
 let TAIL_VISIBILITY = 180;
 let SIDE_MARGIN = 0.2; // For particles, as fraction of div width/height
 let VERTICAL_MARGIN = 0.2;
 let SHOT_RAD = 400;
 let BACKGROUND = 30;
+let PARTICLE_DRAW_SCALE = 6;
 
 
 let ball = null;
@@ -16,7 +17,7 @@ let shootx = 0;
 let shooty = 0;
 let div_height = 0;
 let div_width = 0;
-let level = 1;
+let level = 0;
 var cnv;
 //
 // document.getElementById("reset").onclick = function() {ready_game()};
@@ -48,7 +49,7 @@ function setup() {
     pos_img = loadImage("./assets/BLUE.png");
     neg_img = loadImage("./assets/YELLOW.png");
     el_img = loadImage("./assets/WHITE.png");
-    target_img = loadImage("./assets/ORANGE.png");
+    target_img = loadImage("./assets/TARGET.png");
 
     // console.log(p.x +', '+p.y + ' v: ', p.vx);
     // console.log(i.x +', '+i.y + ', ' + i.intensity);
@@ -178,7 +179,7 @@ function create_random_field(nuclei_num, target_num, min_intensity, max_intensit
 
 function draw_nuclei() {
     for(let i = 0; i < nuclei.length; i++) {
-        let size = 4 * nuclei[i].intensity;
+        let size = PARTICLE_DRAW_SCALE * nuclei[i].intensity;
         // ellipse(nuclei[i].x, nuclei[i].y, size, size);
         if(nuclei[i].intensity > 0)
             image(pos_img, nuclei[i].x, nuclei[i].y, size, size);
@@ -221,7 +222,8 @@ function draw_ball() {
 }
 
 function draw_target() {
-    image(target_img, target.x, target.y, 10, 10);
+    let size = PARTICLE_DRAW_SCALE * 6;
+    image(target_img, target.x, target.y, size, size);
 }
 
 function draw_tails() {
