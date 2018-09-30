@@ -81,9 +81,11 @@ function ready_game() {
     else
         ball = new particle(50, div_height / 2, 1, 0, 0, 0, 0, true);
 }
-
-function end_game() {
+function win() {
     level++;
+    new_game();
+}
+function end_game() {
     let level_indicator = document.getElementById("level");
     level_indicator.textContent = "YOU WIN!";
     level_indicator.style.color = "red";
@@ -213,7 +215,7 @@ function update_ball() {
         if(sqrt(distsq) < EPSILON) {
             ball.die = true;
             if(ball.die === true)
-                end_game();
+                win();
         }
     }
 }
