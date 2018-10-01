@@ -295,7 +295,15 @@ function ready_shoot(p){
     }
     dottedLine(p.x, p.y, sx, sy, 20);
     strokeWeight(.3);
-    text(min(Math.round(len), SHOT_RAD).toString(), sx, sy + 20);
+
+    let angle = Math.atan((p.y - sy)/(sx - p.x)) * 360 / (2 * Math.PI);
+    if(angle < 0 && sy < p.y)
+        angle += 180;
+    else if(angle > 0 && sy > p.y)
+        angle -=180;
+
+    text(Math.min(Math.round(len), SHOT_RAD).toString() + "\n" +
+         (Math.round(angle * 10) / 10).toString() + "\xB0", sx, sy + 20);
     // line(p.x, p.y, sx, sy);
     shootx = (sx - p.x) / 100;
     shooty = (sy - p.y) / 100;
